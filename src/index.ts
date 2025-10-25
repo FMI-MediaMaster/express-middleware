@@ -132,7 +132,7 @@ export const userExtractor = (secret: string) => (req: Request, res: Response, n
     next();
 };
 
-export const errorHandler = (
+export const errorHandler = (env: string) => (
     err: unknown,
     req: Request,
     res: Response,
@@ -140,17 +140,19 @@ export const errorHandler = (
 ): void => {
     const error = err as any;
 
-    console.error({
-        time: new Date().toISOString(),
-        method: req.method,
-        path: req.originalUrl,
-        user: req.userId ?? 'anonymous',
-        message: error.message ?? 'Unknown error',
-        stack: error.stack,
-        body: req.body,
-        query: req.query,
-        params: req.params,
-    });
+    if (env === 'development') {
+        console.error({
+            time: new Date().toISOString(),
+            method: req.method,
+            path: req.originalUrl,
+            user: req.userId ?? 'anonymous',
+            message: error.message ?? 'Unknown error',
+            stack: error.stack,
+            body: req.body,
+            query: req.query,
+            params: req.params,
+        });
+    }
 
     if (res.headersSent) {
         next(err);
@@ -174,3 +176,4 @@ export const errorHandler = (
         res.internalError('Unexpected error');
     }
 };
+
