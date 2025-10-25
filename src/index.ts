@@ -160,6 +160,8 @@ export const errorHandler = (
             message: e.message,
         }));
         res.badRequest({ errors: issues });
+    } else if (error.status === 400) {
+        res.badRequest(error.message);
     } else if (error.name === 'UnauthorizedError' || error.status === 401) {
         res.unauthorized(error.message);
     } else if (error.status === 403) {
